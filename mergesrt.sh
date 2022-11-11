@@ -71,12 +71,12 @@ process() {
     fi
     echo -e "\e[1;32mSTARTING MERGE\e[m"
     MERGE_FILE=$FILE_NAME'.merge'
+    FILE=$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)
     
     DIR="$(dirname "$FILE_NAME")"'/'
     echo -e "\e[1;34mDirectory: $DIR\e[m"
-    grep -ow "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR" | wc -l
-    grep -c "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR"
-    # echo -e "\e[1;34mFile Count: $FILE_COUNT or $FILE_COUNT2\e[m"
+    grep -ow "$FILE" "$DIR" | wc -l
+    grep -c "$FILE" "$DIR"
     
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
