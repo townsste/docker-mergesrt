@@ -75,8 +75,9 @@ process() {
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
     # this is used to keep running the merge untill the file has detected a subtitle.
-    DIR="$(dirname "$FILE_NAME")"
+    DIR="$(dirname "$FILE_NAME")"'/'
     echo -e "\e[1;34mDirectory: $DIR\e[m"
+    echo $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)
     File_COUNT=grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
     echo -e "\e[1;34mFile Count: $File_COUNT\e[m"
     while !(mkvmerge --identify "$MERGE_FILE" | grep -c -q 'subtitle') do
