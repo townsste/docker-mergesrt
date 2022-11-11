@@ -79,6 +79,7 @@ process() {
     grep -c "$FILE" "$DIR"
     grep -l "$FILE" * | wc -l
     ls "$DIR" | wc -l
+    ls "$DIR" | grep -c "$FILE"
     find "$DIR" -type f -name "$FILE*" | wc -l
     
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
