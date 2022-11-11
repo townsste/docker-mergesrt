@@ -78,16 +78,16 @@ process() {
     
     echo "Option 1:"
     grep -ow $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR" | wc -l
-    echo "Option 2:"
-    grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
+    #echo "Option 2:"
+    #grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
     echo "Option 3:"
     grep -l $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) * | wc -l
-    echo "Option 4:"
-    ls "$DIR" | wc -l
-    echo "Option 5:"
-    ls "$DIR" | $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) | grep -c
-    echo "Option 6:"
-    find "$DIR" -type f -name "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)*" | wc -l
+    #echo "Option 4:"
+    #ls "$DIR" | wc -l
+    #echo "Option 5:"
+    #ls "$DIR" | $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) | grep -c
+    #echo "Option 6:"
+    #find "$DIR" -type f -name "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)*" | wc -l
     
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
