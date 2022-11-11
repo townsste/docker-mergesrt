@@ -77,15 +77,15 @@ process() {
     echo -e "\e[1;34mDirectory: $DIR\e[m"
     
     echo "Option 1:"
-    grep -ow $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR" | wc -l
+    grep -ow "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR" | wc -l
     #echo "Option 2:"
     #grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
     echo "Option 3:"
-    grep -l $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) * | wc -l
+    grep -l "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" * | wc -l
     #echo "Option 4:"
     #ls "$DIR" | wc -l
-    #echo "Option 5:"
-    #ls "$DIR" | $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) | grep -c
+    echo "Option 5:"
+    ls "$DIR" | "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" | grep -c
     #echo "Option 6:"
     #find "$DIR" -type f -name "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)*" | wc -l
     
