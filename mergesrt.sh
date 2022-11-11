@@ -75,11 +75,11 @@ process() {
     
     DIR="$(dirname "$FILE_NAME")"'/'
     echo -e "\e[1;34mDirectory: $DIR\e[m"
-    grep -ow "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR" | wc -l
-    grep -c "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR"
-    grep -l "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" * | wc -l
+    grep -ow $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR" | wc -l
+    grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
+    grep -l $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) * | wc -l
     ls "$DIR" | wc -l
-    ls "$DIR" | grep -c "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)"
+    ls "$DIR" | $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) | grep -c
     find "$DIR" -type f -name "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)*" | wc -l
     
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
