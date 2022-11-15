@@ -47,11 +47,11 @@ process() {
     
     #curl -L https://datahub.io/core/language-codes/r/1.csv
     echo "test 1:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -o "en"
+    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "en"
     echo "test 2:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -o "eng"
+    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "eng"
     echo "test 3:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -o $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
     #test2 = 
     if [ "$EXT" == "srt" ]; then
         LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
