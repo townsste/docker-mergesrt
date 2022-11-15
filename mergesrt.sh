@@ -45,29 +45,25 @@ process() {
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
     
-    #curl -L https://datahub.io/core/language-codes/r/1.csv
-    #echo "test en:"
-    #curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "en"
-    #echo "test eng:"
-    #curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "eng"
-    #echo "test sdh:"
-    #curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "sdh"
-    #echo "test cc:"
-    #curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "cc"
-    #echo "test hi:"
-    #curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "hi"
-    #echo "test f2:"
-    curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
-    #echo "test f3:"
-    TEST="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
-    echo -e "\e[1;34mTest: $TEST\e[m"
-    #test2 = 
     if [ "$EXT" == "srt" ]; then
-        LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
-        echo -e "\e[1;34mSubtitle language: $LANG\e[m"
-        TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+        F2="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev))"
+        F3="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
         
-        #if [ ! -f "$VIDEO_FILE" ]; then
+        # Check Language
+        if [ -n "$F2" ] then
+            LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+            echo -e "\e[1;34mSubtitle language: $LANG\e[m"
+            TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+        elif [ -n "$F3" ] then
+            LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+            echo -e "\e[1;34mSubtitle language: $LANG\e[m"
+            TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+        else
+            echo -e "\e[0;31mCould not determine file language, skipping\e[m"
+            return
+        fi
+        
+        #Check TYPE
         if [ "$TYPE" == 'sdh' ] || [ "$TYPE" == 'forced' ] || [ "$TYPE" == 'hi' ] || [ "$TYPE" == 'cc' ]; then
             echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
