@@ -50,7 +50,7 @@ process() {
     if [ "$EXT" == "srt" ]; then
         for i in 1 2;
         do
-            TEST=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f$i+1 | rev)
+            TEST=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f$((i + 1))  | rev)
             if [ "$TEST" == 'sdh' ] || [ "$TEST" == 'forced' ] || [ "$TEST" == 'hi' ] || [ "$TEST" == 'cc' ]; then
                 TYPE = "$TEST"
                 echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
