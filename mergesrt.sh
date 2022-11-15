@@ -45,7 +45,8 @@ process() {
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
   
-    if [ "$EXT" == "srt" ]; then
+    case "$EXT" in
+    srt)
         # Check file endings against a ISO 639-1 and ISO 639-2 list to determine if valid LANG
         F2="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev))"
         F3="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
@@ -95,9 +96,12 @@ process() {
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
             ;;
         esac
-    else
+        ;;
+    idx)
         FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$EXT"'||')
-    fi
+        ;;
+    esac
+    
     echo -e "\e[1;34mFile name: $FILE_NAME\e[m"
     
     VIDEO_FILE=$FILE_NAME'.mkv'
