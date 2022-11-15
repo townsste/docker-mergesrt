@@ -48,14 +48,14 @@ process() {
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
     if [ "$EXT" == "srt" ]; then
-        for i in 2 3;
+        for i in 1 2;
         do
-            TEST=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f$i | rev)
+            TEST=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f"$i+1" | rev)
             if [ "$TEST" == 'sdh' ] || [ "$TEST" == 'forced' ] || [ "$TEST" == 'hi' ] || [ "$TEST" == 'cc' ]; then
-                "$TYPE" = "$TEST"
+                TYPE = "$TEST"
                 echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
             else
-                "$LANG" = "$TEST"
+                LANG = "$TEST"
                 echo -e "\e[1;34mSubtitle language: $LANG\e[m"
             fi
         done
