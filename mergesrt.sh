@@ -66,7 +66,11 @@ process() {
         #Check TYPE
         if [ "$TYPE" == 'sdh' ] || [ "$TYPE" == 'forced' ] || [ "$TYPE" == 'hi' ] || [ "$TYPE" == 'cc' ]; then
             echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
-            FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'\D*'\.'\D*'\.'"$EXT"'||')
+            if [ -n "$F2" ]; then
+                FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
+            else
+                FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$TYPE"'\.'"$EXT"'||')
+            fi
         else 
             TYPE=""
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
