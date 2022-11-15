@@ -45,9 +45,7 @@ process() {
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
     if [ "$EXT" == "srt" ]; then
-        LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
-        echo -e "\e[1;34mSubtitle language: $LANG\e[m"
-        TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+        TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
         if [ "$TYPE" == 'sdh' ] || [ "$TYPE" == 'forced' ] || [ "$TYPE" == 'hi' ] || [ "$TYPE" == 'cc' ]; then
             echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
@@ -55,6 +53,8 @@ process() {
             TYPE=""
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
         fi
+        LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+        echo -e "\e[1;34mSubtitle language: $LANG\e[m"
     else
         FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$EXT"'||')
     fi
@@ -73,25 +73,10 @@ process() {
     MERGE_FILE=$FILE_NAME'.merge'
     FILE=$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)
     
-    DIR="$(dirname "$FILE_NAME")"'/'
-    echo -e "\e[1;34mDirectory: $DIR\e[m"
-    
-    #echo "Option 1:"
-    #grep -ow "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR" | wc -l
-    #echo "Option 2:"
-    #grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
-    #echo "Option 3:"
-    #grep -l "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" * | wc -l
-    #echo "Option 4:"
-    #ls "$DIR" | wc -l
-    echo "Option 5:"
-    ls "$DIR" | "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" | wc -l
-    #echo "Option 6:"
-    #find "$DIR" -type f -name "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)*" | wc -l
-    
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
     # this is used to keep running the merge untill the file has detected a subtitle.
+    # NEED TO WORKOUT HAVING MULTIPLE SUBS. Example: HAVING ENG & SDH.  CURRENTLY USED FOR SINGLE SUB CHECK
     while !(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle') do
         echo -e "\e[0;31mSubtitle is missing from merge file.  Rerunning merge\e[m"
         rm "$MERGE_FILE"
@@ -104,7 +89,9 @@ process() {
         echo "$RESULT"
         echo "Delete $IMPORT_FILE"
         rm "$IMPORT_FILE"
-        rm "$FILE_NAME.sub"
+        if [ "$EXT" == "idx" ]; then
+            rm "$FILE_NAME.sub"
+        fi
         echo "Delete $VIDEO_FILE"
         rm "$VIDEO_FILE"
         echo "Rename $MERGE_FILE to $FILE_NAME.mkv"
