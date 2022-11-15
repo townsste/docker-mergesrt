@@ -50,11 +50,11 @@ process() {
         F3="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
         
         # Check Language
-        if [ -n "$F2" ] then
+        if [ -n "$F2" ]; then
             LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
             echo -e "\e[1;34mSubtitle language: $LANG\e[m"
             TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
-        elif [ -n "$F3" ] then
+        elif [ -n "$F3" ]; then
             LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
             echo -e "\e[1;34mSubtitle language: $LANG\e[m"
             TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
