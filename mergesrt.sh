@@ -59,12 +59,11 @@ process() {
                 echo -e "\e[1;34mSubtitle language: $LANG\e[m"
             fi
         done
-        
-        if [[ ! -z "$TYPE" ]] then
-                FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
-            else
-                FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
-            fi
+        if [[ ! -z "$TYPE" ]]; then
+             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
+        else
+             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
+        fi
     else
         FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$EXT"'||')
     fi
