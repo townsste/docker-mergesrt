@@ -39,34 +39,21 @@ merge() {
 # PROCESS FILE INFORMATION HERE ---------------------------------------------------------
 process() {
     IMPORT_FILE=$1
-    EXT=""
-    LANG=""
-    TYPE=""
     echo "--------------------------- START PROCESS --------------------------"
     echo -e "\e[1;34mImported file: $IMPORT_FILE\e[m"
     # PARSE FILE COMPONENTS ------------------------------------------------------------
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
     if [ "$EXT" == "srt" ]; then
-        for i in 1 2;
-        do
-            TEST=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f$((i + 1))  | rev)
-            if [ "$TEST" == 'sdh' ] || [ "$TEST" == 'forced' ] || [ "$TEST" == 'hi' ] || [ "$TEST" == 'cc' ]; then
-                TYPE = "$TEST"
-                echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
-            else
-                LANG = "$TEST"
-                echo -e "\e[1;34mSubtitle language: $LANG\e[m"
-            fi
-        done
-        if [ ! -z "$LANG" ]; then
-            echo -e "\e[0;31mLang does not exist, skipping\e[m"
-            return
-        fi
-        if [ ! -z "$TYPE" ]; then
-            FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
-        else
+        LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+        echo -e "\e[1;34mSubtitle language: $LANG\e[m"
+        TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+        if [ "$TYPE" == 'sdh' ] || [ "$TYPE" == 'forced' ] || [ "$TYPE" == 'hi' ] || [ "$TYPE" == 'cc' ]; then
+            echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
+        else 
+            TYPE=""
+            FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
         fi
     else
         FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$EXT"'||')
@@ -86,10 +73,25 @@ process() {
     MERGE_FILE=$FILE_NAME'.merge'
     FILE=$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)
     
+    DIR="$(dirname "$FILE_NAME")"'/'
+    echo -e "\e[1;34mDirectory: $DIR\e[m"
+    
+    #echo "Option 1:"
+    #grep -ow "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR" | wc -l
+    #echo "Option 2:"
+    #grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
+    #echo "Option 3:"
+    #grep -l "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" * | wc -l
+    #echo "Option 4:"
+    #ls "$DIR" | wc -l
+    echo "Option 5:"
+    ls "$DIR" | "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" | wc -l
+    #echo "Option 6:"
+    #find "$DIR" -type f -name "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)*" | wc -l
+    
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
     # this is used to keep running the merge untill the file has detected a subtitle.
-    # NEED TO WORKOUT HAVING MULTIPLE SUBS. Example: HAVING ENG & SDH.  CURRENTLY USED FOR SINGLE SUB CHECK
     while !(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle') do
         echo -e "\e[0;31mSubtitle is missing from merge file.  Rerunning merge\e[m"
         rm "$MERGE_FILE"
@@ -102,9 +104,7 @@ process() {
         echo "$RESULT"
         echo "Delete $IMPORT_FILE"
         rm "$IMPORT_FILE"
-        if [ "$EXT" == "idx" ]; then
-            rm "$FILE_NAME.sub"
-        fi
+        rm "$FILE_NAME.sub"
         echo "Delete $VIDEO_FILE"
         rm "$VIDEO_FILE"
         echo "Rename $MERGE_FILE to $FILE_NAME.mkv"
@@ -119,13 +119,12 @@ process() {
 }
 
 # LOOK FOR FILES ON STARTUP -------------------------------------------------------------
-find "$DATA_DIR" -type f -name ".??.*??*.srt" -o -name ".???.*??*.srt" -o -name "*.idx" |
+find "$DATA_DIR" -type f -name "*.???*.??.srt" -o -name "*.???*.???.srt" -o -name "*.idx" |
     while read file; do
         process "$file"
     done
     
 # MONITOR FOR NEW FILES IN DIR ----------------------------------------------------------
-#'.*\.([a-z]{2,3}(?:\.[a-z]{2,6})?\.srt|idx)$'
 inotifywait -m -r $DATA_DIR -e create -e moved_to --include '.*\.([a-z]{2,3}\.srt|idx)$' --format '%w%f' |
     while read file; do
         echo "The file '$file' was created/moved"
