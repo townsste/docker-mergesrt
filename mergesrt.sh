@@ -59,7 +59,7 @@ process() {
     #echo "test f2:"
     curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
     #echo "test f3:"
-    TEST=curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+    TEST="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
     echo -e "\e[1;34mTest: $TEST\e[m"
     #test2 = 
     if [ "$EXT" == "srt" ]; then
