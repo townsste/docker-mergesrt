@@ -46,8 +46,7 @@ process() {
     echo -e "\e[1;34mExtension: $EXT\e[m"
     
     #curl -L https://datahub.io/core/language-codes/r/1.csv
-    test1 = curl -L https://datahub.io/core/language-codes/r/1.csv | grep -o "en"
-    echo -e "\e[1;34mTest LANG: $test1\e[m"
+    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -io "en"
     #test2 = 
     if [ "$EXT" == "srt" ]; then
         LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
