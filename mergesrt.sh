@@ -39,22 +39,32 @@ merge() {
 # PROCESS FILE INFORMATION HERE ---------------------------------------------------------
 process() {
     IMPORT_FILE=$1
+    EXT=""
+    LANG=""
+    TYPE=""
     echo "--------------------------- START PROCESS --------------------------"
     echo -e "\e[1;34mImported file: $IMPORT_FILE\e[m"
     # PARSE FILE COMPONENTS ------------------------------------------------------------
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
     if [ "$EXT" == "srt" ]; then
-        TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
-        if [ "$TYPE" == 'sdh' ] || [ "$TYPE" == 'forced' ] || [ "$TYPE" == 'hi' ] || [ "$TYPE" == 'cc' ]; then
-            echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
-            FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
-        else 
-            TYPE=""
-            FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
-        fi
-        LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
-        echo -e "\e[1;34mSubtitle language: $LANG\e[m"
+        for ( i=2 ; i<=3 ; i++ ); 
+        do
+            TEST=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f$i | rev)
+            if [ "$TEST" == 'sdh' ] || [ "$TEST" == 'forced' ] || [ "$TEST" == 'hi' ] || [ "$TEST" == 'cc' ]; then
+                TYPE = $TEST
+                echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
+            else
+                LANG = $TEST
+                echo -e "\e[1;34mSubtitle language: $LANG\e[m"
+            fi
+        done
+        
+        if [[ ! -z "$TYPE" ]] then
+                FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
+            else
+                FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$LANG"'\.'"$EXT"'||')
+            fi
     else
         FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$EXT"'||')
     fi
@@ -106,13 +116,13 @@ process() {
 }
 
 # LOOK FOR FILES ON STARTUP -------------------------------------------------------------
-find "$DATA_DIR" -type f -name "*.???*.??.srt" -o -name "*.???*.???.srt" -o -name "*.idx" |
+find "$DATA_DIR" -type f -name ".??.*??*.srt" -o -name ".???.*??*.srt" -o -name "*.idx" |
     while read file; do
         process "$file"
     done
     
 # MONITOR FOR NEW FILES IN DIR ----------------------------------------------------------
-inotifywait -m -r $DATA_DIR -e create -e moved_to --include '.*\.([a-z]{2,3}\.srt|idx)$' --format '%w%f' |
+inotifywait -m -r $DATA_DIR -e create -e moved_to --include '.*\.([a-z]{2,3}(?:\.[a-z]{2,6})?\.srt|idx)$' --format '%w%f' |
     while read file; do
         echo "The file '$file' was created/moved"
         process "$file"
