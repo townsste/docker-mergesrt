@@ -48,7 +48,7 @@ process() {
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
     if [ "$EXT" == "srt" ]; then
-        for (( i=2 ; i<=3 ; i++ )); 
+        for n in {2..3};
         do
             TEST=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f$i | rev)
             if [ "$TEST" == 'sdh' ] || [ "$TEST" == 'forced' ] || [ "$TEST" == 'hi' ] || [ "$TEST" == 'cc' ]; then
