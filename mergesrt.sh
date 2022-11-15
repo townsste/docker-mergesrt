@@ -67,7 +67,7 @@ process() {
         echo -e "\e[1;34mSubtitle language: $LANG\e[m"
         TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
         
-        if [ ! -f "$VIDEO_FILE" ]; then
+        #if [ ! -f "$VIDEO_FILE" ]; then
         if [ "$TYPE" == 'sdh' ] || [ "$TYPE" == 'forced' ] || [ "$TYPE" == 'hi' ] || [ "$TYPE" == 'cc' ]; then
             echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
