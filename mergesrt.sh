@@ -46,20 +46,20 @@ process() {
     echo -e "\e[1;34mExtension: $EXT\e[m"
     
     #curl -L https://datahub.io/core/language-codes/r/1.csv
-    echo "test 1:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "en"
-    echo "test 2:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "eng"
-    echo "test 3:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "sdh"
-    echo "test 4:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "cc"
-    echo "test 5:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow "hi"
+    echo "test en:"
+    curl -s-L https://datahub.io/core/language-codes/r/1.csv | grep -ow "en"
+    echo "test eng:"
+    curl -s-L https://datahub.io/core/language-codes/r/1.csv | grep -ow "eng"
+    echo "test sdh:"
+    curl -s-L https://datahub.io/core/language-codes/r/1.csv | grep -ow "sdh"
+    echo "test cc:"
+    curl -s-L https://datahub.io/core/language-codes/r/1.csv | grep -ow "cc"
+    echo "test hi:"
+    curl -s-L https://datahub.io/core/language-codes/r/1.csv | grep -ow "hi"
     echo "test f2:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+    curl -s-L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
     echo "test f3:"
-    curl -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+    curl -s-L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
     #test2 = 
     if [ "$EXT" == "srt" ]; then
         LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
