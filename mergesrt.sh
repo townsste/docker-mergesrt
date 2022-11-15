@@ -44,28 +44,38 @@ process() {
     # PARSE FILE COMPONENTS ------------------------------------------------------------
     EXT=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f1 | rev)
     echo -e "\e[1;34mExtension: $EXT\e[m"
-    
+  
     if [ "$EXT" == "srt" ]; then
+        # Check file endings against a ISO 639-1 and ISO 639-2 list to determine if valid LANG
         F2="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev))"
         F3="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
         
         # Check Language
-        if [ -n "$F2" ]; then
+        if [ -n "$F2" ] && [ -z "$F3" ]; then # Check if first valid after .EXT
             LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
-            echo -e "\e[1;34mSubtitle language: $LANG\e[m"
             TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
-        elif [ -n "$F3" ]; then
+        elif [ -n "$F3" ] && [ -z "$F2" ]; then # Check if second valid after .EXT
             LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
-            echo -e "\e[1;34mSubtitle language: $LANG\e[m"
             TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+        elif [ -n "$F2" ] && [ -n "$F3" ]; then # Check if both valid (edge case of using hi)
+            # Use hi as TYPE (should help prevent Hindu 2 lang code issues)
+            if [ $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev) == 'hi' ]; then
+                LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+                TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+            else
+                LANG=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev)
+                TYPE=$(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev)
+            fi
         else
             echo -e "\e[0;31mCould not determine file language, skipping\e[m"
             return
         fi
+        echo -e "\e[1;34mSubtitle language: $LANG\e[m"
         
         #Check TYPE
         if [ "$TYPE" == 'sdh' ] || [ "$TYPE" == 'forced' ] || [ "$TYPE" == 'hi' ] || [ "$TYPE" == 'cc' ]; then
             echo -e "\e[1;34mSubtitle type: $TYPE\e[m"
+            # Determine if LANG.TYPE or TYPE.LANG format
             if [ -n "$F2" ]; then
                 FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$TYPE"'\.'"$LANG"'\.'"$EXT"'||')
             else
@@ -92,22 +102,6 @@ process() {
     echo -e "\e[1;32mSTARTING MERGE\e[m"
     MERGE_FILE=$FILE_NAME'.merge'
     FILE=$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)
-    
-    DIR="$(dirname "$FILE_NAME")"'/'
-    echo -e "\e[1;34mDirectory: $DIR\e[m"
-    
-    #echo "Option 1:"
-    #grep -ow "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" "$DIR" | wc -l
-    #echo "Option 2:"
-    #grep -c $(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev) "$DIR"
-    #echo "Option 3:"
-    #grep -l "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" * | wc -l
-    #echo "Option 4:"
-    #ls "$DIR" | wc -l
-    echo "Option 5:"
-    ls "$DIR" | "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)" | wc -l
-    #echo "Option 6:"
-    #find "$DIR" -type f -name "$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)*" | wc -l
     
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
