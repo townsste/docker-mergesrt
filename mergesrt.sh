@@ -117,13 +117,18 @@ process() {
     MERGE_FILE=$FILE_NAME'.merge'
     FILE=$(echo "$FILE_NAME" | rev | cut -d'/' -f1 | rev)
     
+    # Count the number of subs in the file
+    CURR_SUB_COUNT="$(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle')"
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
     # this is used to keep running the merge untill the file has detected a subtitle.
-    while !(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle') do
+    # THIS NEEDS WORK to account for more than 1 subtitle
+    NEXT_SUB_COUNT="$(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle')"
+    while (CURR_SUB_COUNT < NEXT_SUB_COUNT) do
         echo -e "\e[0;31mSubtitle is missing from merge file.  Rerunning merge\e[m"
         rm "$MERGE_FILE"
         merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
+        NEXT_SUB_COUNT="$(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle')"
     done
     RESULT=$?
     # CLEAN UP  --------------------------------------------------------------------------
