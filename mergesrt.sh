@@ -134,7 +134,7 @@ process() {
         echo "$RESULT"
         echo "Delete $IMPORT_FILE"
         rm "$IMPORT_FILE"
-        if ("$EXT" == 'idx'); then
+        if [ "$EXT" == 'idx' ]; then
             rm "$FILE_NAME.sub"
         fi
         echo "Delete $VIDEO_FILE"
