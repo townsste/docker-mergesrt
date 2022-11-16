@@ -122,7 +122,8 @@ process() {
     # this is used to keep running the merge untill the file has detected a subtitle.
     NEXT_SUB_COUNT="$(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle')" # Count the number of subs in the post processed file
     echo "NEXT COUNT: $NEXT_SUB_COUNT"
-    while [ "$CURR_SUB_COUNT" -le "$NEXT_SUB_COUNT" ] do
+    while [ "$CURR_SUB_COUNT" -le "$NEXT_SUB_COUNT" ] 
+    do
         echo -e "\e[0;31mSubtitle is missing from merge file.  Rerunning merge\e[m"
         rm "$MERGE_FILE"
         merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
