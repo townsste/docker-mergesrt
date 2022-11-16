@@ -128,6 +128,7 @@ process() {
         rm "$MERGE_FILE"
         merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
         NEXT_SUB_COUNT="$(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle')"
+        echo "NEXT COUNT: $NEXT_SUB_COUNT"
     done
     RESULT=$?
     # CLEAN UP  --------------------------------------------------------------------------
