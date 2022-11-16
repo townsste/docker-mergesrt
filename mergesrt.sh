@@ -118,7 +118,7 @@ process() {
     CURR_SUB_COUNT="$(mkvmerge --identify "$VIDEO_FILE" | grep -c 'subtitle')" # Count the number of subs in the pre processed file
     merge "$MERGE_FILE" "$VIDEO_FILE" "$IMPORT_FILE" "$EXT" "$TYPE" "$LANG"
     # When doing large batches sometimes the merge does not seem to work correctly.
-    # this is used to keep running the merge untill the file has detected a subtitle.
+    # this is used to keep running the merge until the file has detected a new subtitle.
     NEXT_SUB_COUNT="$(mkvmerge --identify "$MERGE_FILE" | grep -c 'subtitle')" # Count the number of subs in the post processed file
     while [ "$CURR_SUB_COUNT" -gt "$NEXT_SUB_COUNT" ] 
     do
@@ -134,12 +134,13 @@ process() {
         echo "$RESULT"
         echo "Delete $IMPORT_FILE"
         rm "$IMPORT_FILE"
-        rm "$FILE_NAME.sub"
+        if ("$EXT" == 'idx'); then
+            rm "$FILE_NAME.sub"
+        fi
         echo "Delete $VIDEO_FILE"
         rm "$VIDEO_FILE"
         echo "Rename $MERGE_FILE to $FILE_NAME.mkv"
         mv "$MERGE_FILE" "$FILE_NAME.mkv"
-        # rm "$MERGE_FILE"
         echo "---------------------------- END PROCESS ---------------------------"
     else
         echo -e "\e[0;31mMERGE FAILED\e[m"
