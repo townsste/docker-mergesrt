@@ -33,7 +33,6 @@ Fork of zzeneg/mergesrt. Docker container for monitoring subtitle files and merg
           - file_name.eng.forced.srt or .ass
           - file_name.eng.srt or .ass
           - file_name.en.srt or .ass
-
     - IDX
          - file_name.idx
 
