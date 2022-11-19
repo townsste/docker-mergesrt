@@ -19,7 +19,7 @@ merge() {
     lang=$6
 
     case $ext in
-                srt)
+                srt|ass)
                     if [ "$type" == "sdh" ] || [ "$type" == "hi" ] || [ "$type" == "cc" ]; then
                         mkvmerge -o "$output" "$input" --language 0:$lang --track-name 0:$type --hearing-impaired-flag 0:true "$import"
                     elif [ "$type" == "forced" ]; then
@@ -29,7 +29,7 @@ merge() {
                     fi
                     return 
                     ;;
-                idx|ass)
+                idx)
                     mkvmerge -o "$output" "$input" "$import"
                     return
                     ;;
@@ -46,7 +46,7 @@ process() {
     echo -e "\e[1;34mExtension: $EXT\e[m"
   
     case "$EXT" in
-        srt)
+        srt|ass)
             # Check file endings against a ISO 639-1 and ISO 639-2 list to determine if valid LANG
             F2="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev))"
             F3="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
@@ -97,7 +97,7 @@ process() {
                 ;;
             esac
             ;;
-        idx|ass)
+        idx)
             FILE_NAME=$(echo "$IMPORT_FILE" | sed 's|\.'"$EXT"'||')
             ;;
     esac
