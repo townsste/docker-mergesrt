@@ -19,7 +19,7 @@ merge() {
     lang=$6
 
     case $ext in
-                srt)
+                srt|ass)
                     if [ "$type" == "sdh" ] || [ "$type" == "hi" ] || [ "$type" == "cc" ]; then
                         mkvmerge -o "$output" "$input" --language 0:$lang --track-name 0:$type --hearing-impaired-flag 0:true "$import"
                     elif [ "$type" == "forced" ]; then
@@ -46,7 +46,7 @@ process() {
     echo -e "\e[1;34mExtension: $EXT\e[m"
   
     case "$EXT" in
-        srt)
+        srt|ass)
             # Check file endings against a ISO 639-1 and ISO 639-2 list to determine if valid LANG
             F2="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f2 | rev))"
             F3="$(curl -s -L https://datahub.io/core/language-codes/r/1.csv | grep -ow $(echo "$IMPORT_FILE" | rev | cut -d'.' -f3 | rev))"
@@ -150,13 +150,13 @@ process() {
 }
 
 # LOOK FOR FILES ON STARTUP -------------------------------------------------------------
-find "$DATA_DIR" -type f -name "*.???*.??.srt" -o -name "*.???*.???.srt" -o -name "*.idx" |
+find "$DATA_DIR" -type f -name "*.???*.??.srt" -o -name "*.???*.???.srt" -o -name "*.idx" -o -name "*.ass"|
     while read file; do
         process "$file"
     done
     
 # MONITOR FOR NEW FILES IN DIR ----------------------------------------------------------
-inotifywait -m -r $DATA_DIR -e create -e moved_to --include '.*\.([a-z]{2,3}\.srt|idx)$' --format '%w%f' |
+inotifywait -m -r $DATA_DIR -e create -e moved_to --include '.*\.([a-z]{2,3}\.srt|idx|ass)$' --format '%w%f' |
     while read file; do
         echo "The file '$file' was created/moved"
         process "$file"
