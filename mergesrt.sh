@@ -150,13 +150,13 @@ process() {
 }
 
 # LOOK FOR FILES ON STARTUP -------------------------------------------------------------
-find "$DATA_DIR" -type f -name "*.???*.??.srt" -o -name "*.???*.???.srt" -o -name "*.idx" -o -name "*.ass"|
+find "$DATA_DIR" -type f -name "*.srt" -o -name "*.idx" -o -name "*.ass"|
     while read file; do
         process "$file"
     done
     
 # MONITOR FOR NEW FILES IN DIR ----------------------------------------------------------
-inotifywait -m -r $DATA_DIR -e create -e moved_to --include '.*\.([a-z]{2,3}\.srt|idx|ass)$' --format '%w%f' |
+inotifywait -m -r $DATA_DIR -e create -e moved_to --include '(.srt|.idx|.ass)' --format '%w%f' |
     while read file; do
         echo "The file '$file' was created/moved"
         process "$file"
