@@ -104,10 +104,12 @@ process() {
     
     echo -e "\e[1;34mFile name: $FILE_NAME\e[m"
     
-    VIDEO_FILE=$FILE_NAME'.mkv'
+    FILE_EXT='.mkv'
+    VIDEO_FILE=$FILE_NAME$FILE_EXT
     # CHECK IF VIDEO EXISTS -------------------------------------------------------------
     if [ ! -f "$VIDEO_FILE" ]; then
-        VIDEO_FILE=$FILE_NAME'.mp4'
+        FILE_EXT='.mp4'
+        VIDEO_FILE=$FILE_NAME$FILE_EXT
     fi
     if [ ! -f "$VIDEO_FILE" ]; then
         echo -e "\e[0;31mFile $VIDEO_FILE does not exist, skipping\e[m"
@@ -139,8 +141,8 @@ process() {
         fi
         echo "Delete $VIDEO_FILE"
         rm "$VIDEO_FILE"
-        echo "Rename $MERGE_FILE to $FILE_NAME.mkv"
-        mv "$MERGE_FILE" "$FILE_NAME.mkv"
+        echo "Rename $MERGE_FILE to $FILE_NAME$FILE_EXT"
+        mv "$MERGE_FILE" "$FILE_NAME$FILE_EXT"
         echo "---------------------------- END PROCESS ---------------------------"
     else
         echo -e "\e[0;31mMERGE FAILED\e[m"
