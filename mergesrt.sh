@@ -148,9 +148,10 @@ process() {
         echo -e "\e[0;31mMERGE FAILED\e[m"
     fi
 
-    # sendToWebhook
+    sendToWebhook
 }
 
+start() {
 # LOOK FOR FILES ON STARTUP -------------------------------------------------------------
 find "$DATA_DIR" -type f -name "*.srt" -o -name "*.idx" -o -name "*.ass"|
     while read file; do
@@ -163,3 +164,6 @@ inotifywait -m -r $DATA_DIR -e create -e moved_to --include '(.srt|.idx|.ass)' -
         echo "The file '$file' was created/moved"
         process "$file"
     done
+}
+
+start
