@@ -163,5 +163,3 @@ inotifywait -m -r $DATA_DIR -e create -e moved_to --include '.*\.([a-z]{2,3}\.sr
         echo "The file '$file' was created/moved"
         process "$file"
     done
-
-start
