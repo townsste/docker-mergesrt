@@ -158,7 +158,7 @@ find "$DATA_DIR" -type f -name "*.srt" -o -name "*.idx" -o -name "*.ass" |
     done
     
 # MONITOR FOR NEW FILES IN DIR ----------------------------------------------------------
-inotifywait -m -r $DATA_DIR -e create -e moved_to --format '%w%f' |
+inotifywait -m -r $DATA_DIR -e create -e moved_to --include '(.*[a-z]{2,6}\.srt$)|(.*\.idx$)|(.*[a-z]{2,6}\.ass$)' --format '%w%f' |
     while read file; do
         echo "The file '$file' was created/moved"
         process "$file"
