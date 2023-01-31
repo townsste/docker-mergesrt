@@ -149,6 +149,7 @@ process() {
     fi
 
     sendToWebhook
+    start
 }
 
 start() {
