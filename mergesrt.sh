@@ -1,7 +1,5 @@
 #!/bin/sh
 
-DATA_DIR='/data'
-
 sendToWebhook() {
     if [ -n "$WEBHOOK_URL" ] && [ -n "$WEBHOOK_TEMPLATE" ]; then
         data=$(eval "echo \"$WEBHOOK_TEMPLATE\"")
@@ -151,8 +149,10 @@ process() {
     sendToWebhook
 }
 
+DATA_DIR='/data'
+
 # LOOK FOR FILES ON STARTUP -------------------------------------------------------------
-find "$DATA_DIR" -type f -name "*.srt" -o -name "*.idx" -o -name "*.ass"|
+find "$DATA_DIR" -type f -name "*.srt" -o -name "*.idx" -o -name "*.ass" |
     while read file; do
         process "$file"
     done
