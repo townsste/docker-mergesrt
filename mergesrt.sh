@@ -148,7 +148,7 @@ process() {
         echo -e "\e[0;31mMERGE FAILED\e[m"
     fi
 
-    sendToWebhook
+    #sendToWebhook
     start
 }
 
